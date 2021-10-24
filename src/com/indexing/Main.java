@@ -2,6 +2,19 @@ package com.indexing;
 
 public class Main {
 
+    private String readFromInputStream(InputStream inputStream) throws IOException {
+        StringBuilder resultString = new StringBuilder();
+        
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                resultString.append(line).append("\n");
+            }
+        }
+
+        return resultString.toString();
+    }
+
     public static void main(String[] args) {
 	// write your code here
         // Write a Java application that provides a service for indexing text files.
