@@ -36,15 +36,7 @@ public class Main {
         }
     }
 
-    // reads given file
-    public static void readFile(File file) throws FileNotFoundException {
-        Scanner currentScanner = new Scanner(file);
-
-        if (currentScanner.hasNext()) {
-            System.out.println(currentScanner.nextLine());
-        }
-    }
-
+    // processing directory
     public static void processDirectory(File directory) throws FileNotFoundException {
         File[] fileList = directory.listFiles();
 
@@ -62,23 +54,62 @@ public class Main {
         }
     }
 
+    // searches file for text
+    public static void searchFile(String text, File file) throws FileNotFoundException {
+        Scanner searchScanner = new Scanner(file);
+
+        System.out.format("File: %s%n", file.getName());
+
+        while (searchScanner.hasNext()) {
+            String currentLine = searchScanner.nextLine();
+
+            if (currentLine.contains(text)) {
+                System.out.println(currentLine);
+            }
+        }
+    }
+
+    // search directory for text
+    public static void searchDirectory(String text, File directory) throws FileNotFoundException {
+        File[] fileList = directory.listFiles();
+
+        for (File subFile: Objects.requireNonNull(fileList)) {
+            // for files
+            if (subFile.isFile()) {
+                searchFile(text, subFile);
+            }
+
+            // for sub-directories
+            else if (subFile.isDirectory()) {
+                searchDirectory(text, subFile);
+            }
+        }
+    }
+
+    // reads given file
+    public static void readFile(File file) throws FileNotFoundException {
+        Scanner currentScanner = new Scanner(file);
+
+        while (currentScanner.hasNext()) {
+            System.out.println(currentScanner.nextLine());
+        }
+    }
+
     public static void main(String[] args) throws FileNotFoundException {
-        // provides a service for indexing text files.
         // Console interface should allow for
         // a. specifying the indexed files and directories and
         // b. querying files containing a given word.
         // Library should be extensible by the tokenization algorithm (simple splitting by words/support lexers/etc.).
-        // State persistence between running sessions is not needed.
         // Providing some tests and a program with usage examples is advised.
 
-        // Setting up the input scanner
+        // Set up input scanner
         Scanner sc = new Scanner(System.in);
 
         String HELP = "Use the 'help' command for the list of commands available.";
         String MISSING_ERR = "Use the 'ls' command to check for files and directories in the index.";
         String SIZE_ERR = "Use the 'add' command to add files or directories.";
 
-        // Introducing the user to the application
+        // introductory text
         System.out.println("Welcome to text-file-indexing! A service for indexing text files.");
 
         // print list of commands
@@ -270,6 +301,55 @@ public class Main {
                 else {
                     System.out.println("There are no files or directories in the index.");
                     System.out.println(SIZE_ERR);
+
+                }
+
+            }
+
+            // 'search' command
+            else if (command.contains("search")) {
+                String text;
+                String[] splitCommand = command.split(" ");
+
+                if (splitCommand[0].equals("search")) {
+                    StringBuilder temp = new StringBuilder();
+
+                    // command line argument processing
+                    if (splitCommand.length > 1) {
+                        for (int i = 1; i < splitCommand.length; i++) {
+                            temp.append(splitCommand[i]).append(" ");
+                        }
+
+                        text = temp.toString().strip();
+                    }
+
+                    // if argument is missing
+                    else {
+                        System.out.print("Enter text to search: ");
+                        text = sc.nextLine();
+                    }
+
+                }
+
+                // invalid command check
+                else {
+                    invalidCommand(command);
+                    continue;
+                }
+
+                // searching index
+                for (String fileName: index.keySet()) {
+                    File current = index.get(fileName);
+
+                    // search directory
+                    if (current.isDirectory()) {
+                        searchDirectory(text, current);
+                    }
+
+                    // search file
+                    else {
+                        searchFile(text, current);
+                    }
 
                 }
 
