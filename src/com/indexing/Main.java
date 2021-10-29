@@ -14,8 +14,7 @@ public class Main {
         System.out.println("read: reads the specified file in the index");
         System.out.println("ls: displays the files and directories available in the index");
         System.out.println("search: searches for a word or phrase in the index");
-        System.out.print("\n");
-        System.out.println("NOTE: Commands are case sensitive.");
+        System.out.println("\nNOTE: Commands are case sensitive.");
     }
 
     // print when a command is invalid
@@ -23,8 +22,8 @@ public class Main {
         System.out.println(command + " is invalid.");
     }
 
-    // process given file
-    public static File processFile(String filename) {
+    // processes a file or directory
+    public static File process(String filename) {
         File file = new File(filename);
 
         if (file.exists()) {
@@ -36,8 +35,20 @@ public class Main {
         }
     }
 
-    // processing directory
-    public static void processDirectory(File directory) throws FileNotFoundException {
+    // reads file
+    public static void readFile(File file) throws FileNotFoundException {
+        Scanner currentScanner = new Scanner(file);
+        System.out.format("File: %s%n", file.getName());
+
+        while (currentScanner.hasNext()) {
+            System.out.println(currentScanner.nextLine());
+        }
+
+        currentScanner.close();
+    }
+
+    // read directory
+    public static void readDirectory(File directory) throws FileNotFoundException {
         File[] fileList = directory.listFiles();
 
         for (File subFile: Objects.requireNonNull(fileList)) {
@@ -48,7 +59,7 @@ public class Main {
 
             // for sub-directories
             else if (subFile.isDirectory()) {
-                processDirectory(subFile);
+                readDirectory(subFile);
             }
         }
     }
@@ -66,6 +77,8 @@ public class Main {
                 System.out.println(currentLine);
             }
         }
+
+        searchScanner.close();
     }
 
     // search directory for text
@@ -85,18 +98,9 @@ public class Main {
         }
     }
 
-    // reads given file
-    public static void readFile(File file) throws FileNotFoundException {
-        Scanner currentScanner = new Scanner(file);
-        System.out.format("File: %s%n", file.getName());
-
-        while (currentScanner.hasNext()) {
-            System.out.println(currentScanner.nextLine());
-        }
-    }
-
     // main application
     public static void main(String[] args) throws FileNotFoundException {
+
         // set up input scanner
         Scanner sc = new Scanner(System.in);
 
@@ -111,9 +115,9 @@ public class Main {
         commands();
 
         System.out.println(HELP);
-        System.out.println("Happy indexing!");
+        System.out.println("Go index!");
 
-        // state of the application
+        // current state
         boolean running = true;
 
         // initialise new index
@@ -171,8 +175,8 @@ public class Main {
                 }
 
                 // check if file exists
-                if (processFile(fileName) != null) {
-                    index.put(fileName, processFile(fileName));
+                if (process(fileName) != null) {
+                    index.put(fileName, process(fileName));
                     System.out.println("Successfully added " + fileName + ".");
                 }
 
@@ -276,7 +280,7 @@ public class Main {
 
                     // checking for directory
                     if (current.isDirectory()) {
-                        processDirectory(current);
+                        readDirectory(current);
                     }
 
                     // file reading
