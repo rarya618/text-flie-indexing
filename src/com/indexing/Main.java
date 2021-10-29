@@ -11,7 +11,7 @@ public class Main {
         System.out.println("quit: quits application");
         System.out.println("add: adds files or directories for indexing");
         System.out.println("rm: removes files or directories from indexing");
-        System.out.println("read: reads the specified file in the index");
+        System.out.println("read: displays contents of a given file or directory in the index");
         System.out.println("ls: displays the files and directories available in the index");
         System.out.println("search: searches for a word or phrase in the index");
         System.out.println("\nNOTE: Commands are case sensitive.");
@@ -38,11 +38,14 @@ public class Main {
     // reads file
     public static void readFile(File file) throws FileNotFoundException {
         Scanner currentScanner = new Scanner(file);
-        System.out.format("File: %s%n", file.getName());
+
+        System.out.format("File: %s. Directory: %s%n", file.getName(), file.getParent());
 
         while (currentScanner.hasNext()) {
             System.out.println(currentScanner.nextLine());
         }
+
+        System.out.print("\n");
 
         currentScanner.close();
     }
@@ -68,16 +71,22 @@ public class Main {
     public static void searchFile(String text, File file) throws FileNotFoundException {
         Scanner searchScanner = new Scanner(file);
 
-        System.out.format("File: %s%n", file.getName());
+        // counter to print only before first entry
+        int count = 0;
 
+        // print lines in which text is present
         while (searchScanner.hasNext()) {
             String currentLine = searchScanner.nextLine();
 
             if (currentLine.contains(text)) {
+                // print for first entry only. done to avoid empty files taking up space.
+                if (count == 0) {
+                    System.out.format("File: %s. Directory: %s%n", file.getName(), file.getParent());
+                }
                 System.out.println(currentLine);
+                count++;
             }
         }
-
         searchScanner.close();
     }
 
