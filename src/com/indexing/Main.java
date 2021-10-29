@@ -1,9 +1,7 @@
 package com.indexing;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
@@ -15,6 +13,7 @@ public class Main {
         System.out.println("add -d: adds directories for indexing");
         System.out.println("rm: removes files from indexing");
         System.out.println("rm -d: removes directories from indexing");
+        System.out.println("read: reads the specified file in the index");
         System.out.println("ls: displays the files and directories available in the index");
         System.out.println("search: searches for a word or phrase in the index");
         System.out.print("\n");
@@ -27,16 +26,15 @@ public class Main {
     }
 
     // process given file
-    public static boolean processFile(String filename) {
-        try {
-            File file = new File(filename);
-            Scanner fileScanner = new Scanner(file);
+    public static File processFile(String filename) {
+        File file = new File(filename);
 
-            return true;
+        if (file.exists()) {
+            return file;
         }
 
-        catch (IOException e) {
-            return false;
+        else {
+            return null;
         }
     }
 
@@ -53,7 +51,7 @@ public class Main {
         return resultString.toString();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
         // provides a service for indexing text files.
         // Console interface should allow for
         // a. specifying the indexed files and directories and
@@ -84,7 +82,7 @@ public class Main {
         boolean running = true;
 
         // initialise new index
-        List<String> index = new ArrayList<>();
+        Map<String, File> index = new HashMap<>();
 
         // run if state is running
         while(running) {
@@ -138,8 +136,8 @@ public class Main {
                 }
 
                 // check if file exists
-                if (processFile(fileName)) {
-                    index.add(fileName);
+                if (processFile(fileName) != null) {
+                    index.put(fileName, processFile(fileName));
                     System.out.println("Successfully added " + fileName + ".");
                 }
 
@@ -182,9 +180,57 @@ public class Main {
                 }
 
                 // check if file exists in index
-                if (index.contains(fileName)) {
+                if (index.containsKey(fileName)) {
                     index.remove(fileName);
                     System.out.println("Successfully removed " + fileName + ".");
+                }
+
+                // error handling
+                else {
+                    System.out.println(fileName + " is not in the index.");
+                    System.out.println(MISSING_ERR);
+                }
+
+            }
+
+            // 'read' command
+            else if (command.contains("read")) {
+                String fileName;
+                String[] splitCommand = command.split(" ");
+
+                if (splitCommand[0].equals("read")) {
+                    StringBuilder temp = new StringBuilder();
+
+                    // command line argument processing
+                    if (splitCommand.length > 1) {
+                        for (int i = 1; i < splitCommand.length; i++) {
+                            temp.append(splitCommand[i]).append(" ");
+                        }
+
+                        fileName = temp.toString().strip();
+                    }
+
+                    // if argument is missing
+                    else {
+                        System.out.print("Enter file name to read: ");
+                        fileName = sc.nextLine();
+                    }
+
+                }
+
+                // invalid command check
+                else {
+                    invalidCommand(command);
+                    continue;
+                }
+
+                // check if file exists in index
+                if (index.containsKey(fileName)) {
+                    Scanner current = new Scanner(index.get(fileName));
+
+                    if (current.hasNext()) {
+                        System.out.println(current.nextLine());
+                    }
                 }
 
                 // error handling
@@ -199,7 +245,7 @@ public class Main {
             else if (command.equals("ls")) {
                 // check for empty index
                 if (index.size() > 0) {
-                    for (String item: index) {
+                    for (String item: index.keySet()) {
                         System.out.println(item);
                     }
                 }
