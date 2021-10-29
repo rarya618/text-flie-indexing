@@ -13,12 +13,18 @@ public class Main {
     public static void commands() {
         System.out.println("Commands:");
         System.out.println("quit: quits application");
-        System.out.println("add: adds files or directories for indexing");
-        System.out.println("remove: removes files or directories from indexing");
-        System.out.println("list: displays the files and directories available in the index");
+        System.out.println("add: adds files for indexing");
+        System.out.println("add -d: adds directories for indexing");
+        System.out.println("rm: removes files from indexing");
+        System.out.println("rm -d: removes directories from indexing");
+        System.out.println("ls: displays the files and directories available in the index");
         System.out.println("search: searches for a word or phrase in the index");
         System.out.print("\n");
         System.out.println("NOTE: Commands are case sensitive.");
+    }
+
+    public static void invalidCommand(String command) {
+        System.out.println(command + " is invalid.");
     }
 
     private String readFromInputStream(InputStream inputStream) throws IOException {
@@ -47,7 +53,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
 
         String HELP = "Use the 'help' command for the list of commands available.";
-        String MISSING_ERR = "Use the 'list' command to check for files and directories in the index.";
+        String MISSING_ERR = "Use the 'ls' command to check for files and directories in the index.";
         String SIZE_ERR = "Use the 'add' command to add files or directories.";
 
         String START_PROCESS = "Running...";
@@ -62,9 +68,9 @@ public class Main {
         boolean running = true;
 
         // initialise new index
-        List<String> index = new ArrayList<String>();
+        List<String> index = new ArrayList<>();
 
-        // check if state is running
+        // run if state is running
         while(running) {
             // command input
             System.out.print("\n>> ");
@@ -85,9 +91,36 @@ public class Main {
             }
 
             // 'add' command
-            else if (command.equals("add")) {
-                System.out.print("Enter file name to add: ");
-                String fileName = sc.nextLine();
+            else if (command.contains("add")) {
+                String fileName;
+                String[] splitCommand = command.split(" ");
+
+                if (splitCommand[0].equals("add")) {
+                    StringBuilder temp = new StringBuilder();
+
+                    // command line argument processing
+                    if (splitCommand.length > 1) {
+                        for (int i = 1; i < splitCommand.length; i++) {
+                            temp.append(splitCommand[i]).append(" ");
+                        }
+
+                        fileName = temp.toString().strip();
+                    }
+
+                    // if argument is missing
+                    else {
+                        System.out.print("Enter file name to add: ");
+                        fileName = sc.nextLine();
+                    }
+
+                }
+
+                // invalid command check
+                else {
+                    invalidCommand(command);
+                    continue;
+                }
+
                 System.out.println(START_PROCESS);
 
                 index.add(fileName);
@@ -96,13 +129,35 @@ public class Main {
             }
 
             // 'remove' command
-            else if (command.equals("remove")) {
-                System.out.print("Enter file name to remove: ");
+            else if (command.contains("rm")) {
+                String fileName;
+                String[] splitCommand = command.split(" ");
 
-                String fileName = sc.nextLine();
+                if (splitCommand[0].equals("rm")) {
+                    StringBuilder temp = new StringBuilder();
 
-                // file name pre-processing
-                fileName = fileName.strip();
+                    // command line argument processing
+                    if (splitCommand.length > 1) {
+                        for (int i = 1; i < splitCommand.length; i++) {
+                            temp.append(splitCommand[i]).append(" ");
+                        }
+
+                        fileName = temp.toString().strip();
+                    }
+
+                    // if argument is missing
+                    else {
+                        System.out.print("Enter file name to remove: ");
+                        fileName = sc.nextLine();
+                    }
+
+                }
+
+                // invalid command check
+                else {
+                    invalidCommand(command);
+                    continue;
+                }
 
                 // start remove process
                 System.out.println(START_PROCESS);
@@ -122,11 +177,11 @@ public class Main {
             }
 
             // 'list' command
-            else if (command.equals("list")) {
+            else if (command.equals("ls")) {
                 // check for empty index
                 if (index.size() > 0) {
-                    for (String indexItem: index) {
-                        System.out.println(indexItem);
+                    for (String item: index) {
+                        System.out.println(item);
                     }
                 }
 
@@ -141,12 +196,12 @@ public class Main {
 
             // error handling
             else {
-                System.out.print(command);
-                System.out.println(" is invalid.");
+                invalidCommand(command);
                 System.out.println(HELP);
             }
         }
 
-
+        // close scanner
+        sc.close();
     }
 }
