@@ -117,11 +117,11 @@ public class Main {
         }
     }
 
-    // main application
-    public static void main(String[] args) throws FileNotFoundException {
+    // run application
+    public static void run(InputStream inputStream) throws IOException {
 
         // set up input scanner
-        Scanner sc = new Scanner(System.in);
+        Scanner sc = new Scanner(inputStream);
 
         String HELP = "Use the 'help' command for the list of commands available.";
         String MISSING_ERR = "Use the 'ls' command to check for files and directories in the index.";
@@ -151,8 +151,53 @@ public class Main {
             // command preprocessing
             command = command.strip();
 
-            // 'quit' commands
-            if (command.equals("quit")) {
+            // 'test' command
+            if (command.contains("test")) {
+                String fileName;
+                String[] splitCommand = command.split(" ");
+
+                if (splitCommand[0].equals("test")) {
+                    StringBuilder temp = new StringBuilder();
+
+                    // command line argument processing
+                    if (splitCommand.length > 1) {
+                        for (int i = 1; i < splitCommand.length; i++) {
+                            temp.append(splitCommand[i]).append(" ");
+                        }
+
+                        fileName = temp.toString().strip();
+                    }
+
+                    // if argument is missing
+                    else {
+                        System.out.print("Enter testing file: ");
+                        fileName = sc.nextLine();
+                    }
+
+                    // check if file exists
+                    if (process(fileName) != null) {
+                        InputStream testStream = new FileInputStream(process(fileName));
+                        run(testStream);
+
+                        running = false;
+                    }
+
+                    // error handling
+                    else {
+                        System.out.println(fileName + " does not exist.");
+                    }
+
+
+                }
+
+                // invalid command check
+                else {
+                    invalidCommand(command);
+                }
+            }
+
+            // 'quit' command
+            else if (command.equals("quit")) {
                 System.out.print("Ending application...");
                 running = false;
             }
@@ -404,5 +449,10 @@ public class Main {
 
         // close scanner
         sc.close();
+    }
+
+    // main application
+    public static void main(String[] args) throws IOException {
+        run(System.in);
     }
 }
