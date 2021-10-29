@@ -9,10 +9,8 @@ public class Main {
     public static void commands() {
         System.out.println("Commands:");
         System.out.println("quit: quits application");
-        System.out.println("add: adds files for indexing");
-        System.out.println("add -d: adds directories for indexing");
-        System.out.println("rm: removes files from indexing");
-        System.out.println("rm -d: removes directories from indexing");
+        System.out.println("add: adds files or directories for indexing");
+        System.out.println("rm: removes files or directories from indexing");
         System.out.println("read: reads the specified file in the index");
         System.out.println("ls: displays the files and directories available in the index");
         System.out.println("search: searches for a word or phrase in the index");
@@ -38,17 +36,30 @@ public class Main {
         }
     }
 
-    private String readFromInputStream(InputStream inputStream) throws IOException {
-        StringBuilder resultString = new StringBuilder();
-        
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                resultString.append(line).append("\n");
+    // reads given file
+    public static void readFile(File file) throws FileNotFoundException {
+        Scanner currentScanner = new Scanner(file);
+
+        if (currentScanner.hasNext()) {
+            System.out.println(currentScanner.nextLine());
+        }
+    }
+
+    public static void processDirectory(File directory) throws FileNotFoundException {
+        File[] fileList = directory.listFiles();
+
+        for (File subFile: Objects.requireNonNull(fileList)) {
+            // for files
+            if (subFile.isFile()) {
+                System.out.format("File: %s%n", subFile.getName());
+                readFile(subFile);
+            }
+
+            // for sub-directories
+            else if (subFile.isDirectory()) {
+                processDirectory(subFile);
             }
         }
-
-        return resultString.toString();
     }
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -66,8 +77,6 @@ public class Main {
         String HELP = "Use the 'help' command for the list of commands available.";
         String MISSING_ERR = "Use the 'ls' command to check for files and directories in the index.";
         String SIZE_ERR = "Use the 'add' command to add files or directories.";
-
-        String START_PROCESS = "Running...";
 
         // Introducing the user to the application
         System.out.println("Welcome to text-file-indexing! A service for indexing text files.");
@@ -226,11 +235,18 @@ public class Main {
 
                 // check if file exists in index
                 if (index.containsKey(fileName)) {
-                    Scanner current = new Scanner(index.get(fileName));
+                    File current = index.get(fileName);
 
-                    if (current.hasNext()) {
-                        System.out.println(current.nextLine());
+                    // checking for directory
+                    if (current.isDirectory()) {
+                        processDirectory(current);
                     }
+
+                    // file reading
+                    else {
+                        readFile(current);
+                    }
+
                 }
 
                 // error handling
