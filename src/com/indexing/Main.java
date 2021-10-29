@@ -43,7 +43,6 @@ public class Main {
         for (File subFile: Objects.requireNonNull(fileList)) {
             // for files
             if (subFile.isFile()) {
-                System.out.format("File: %s%n", subFile.getName());
                 readFile(subFile);
             }
 
@@ -89,6 +88,7 @@ public class Main {
     // reads given file
     public static void readFile(File file) throws FileNotFoundException {
         Scanner currentScanner = new Scanner(file);
+        System.out.format("File: %s%n", file.getName());
 
         while (currentScanner.hasNext()) {
             System.out.println(currentScanner.nextLine());
@@ -239,21 +239,31 @@ public class Main {
                 String[] splitCommand = command.split(" ");
 
                 if (splitCommand[0].equals("read")) {
-                    StringBuilder temp = new StringBuilder();
+                    // check for empty index
+                    if (index.size() > 0) {
+                        StringBuilder temp = new StringBuilder();
 
-                    // command line argument processing
-                    if (splitCommand.length > 1) {
-                        for (int i = 1; i < splitCommand.length; i++) {
-                            temp.append(splitCommand[i]).append(" ");
+                        // command line argument processing
+                        if (splitCommand.length > 1) {
+                            for (int i = 1; i < splitCommand.length; i++) {
+                                temp.append(splitCommand[i]).append(" ");
+                            }
+
+                            fileName = temp.toString().strip();
                         }
 
-                        fileName = temp.toString().strip();
+                        // if argument is missing
+                        else {
+                            System.out.print("Enter file name to read: ");
+                            fileName = sc.nextLine();
+                        }
                     }
 
-                    // if argument is missing
+                    // empty index check
                     else {
-                        System.out.print("Enter file name to read: ");
-                        fileName = sc.nextLine();
+                        System.out.println("There are no files or directories in the index.");
+                        System.out.println(SIZE_ERR);
+                        continue;
                     }
 
                 }
