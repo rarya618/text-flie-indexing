@@ -301,9 +301,7 @@ public class Main {
                 else {
                     System.out.println("There are no files or directories in the index.");
                     System.out.println(SIZE_ERR);
-
                 }
-
             }
 
             // 'search' command
@@ -311,48 +309,56 @@ public class Main {
                 String text;
                 String[] splitCommand = command.split(" ");
 
-                if (splitCommand[0].equals("search")) {
-                    StringBuilder temp = new StringBuilder();
+                // check for empty index
+                if (index.size() > 0) {
 
-                    // command line argument processing
-                    if (splitCommand.length > 1) {
-                        for (int i = 1; i < splitCommand.length; i++) {
-                            temp.append(splitCommand[i]).append(" ");
+                    if (splitCommand[0].equals("search")) {
+                        StringBuilder temp = new StringBuilder();
+
+                        // command line argument processing
+                        if (splitCommand.length > 1) {
+                            for (int i = 1; i < splitCommand.length; i++) {
+                                temp.append(splitCommand[i]).append(" ");
+                            }
+
+                            text = temp.toString().strip();
                         }
 
-                        text = temp.toString().strip();
+                        // if argument is missing
+                        else {
+                            System.out.print("Enter text to search: ");
+                            text = sc.nextLine();
+                        }
+
                     }
 
-                    // if argument is missing
+                    // invalid command check
                     else {
-                        System.out.print("Enter text to search: ");
-                        text = sc.nextLine();
+                        invalidCommand(command);
+                        continue;
                     }
 
+                    // searching index
+                    for (String fileName: index.keySet()) {
+                        File current = index.get(fileName);
+
+                        // search directory
+                        if (current.isDirectory()) {
+                            searchDirectory(text, current);
+                        }
+
+                        // search file
+                        else {
+                            searchFile(text, current);
+                        }
+                    }
                 }
 
-                // invalid command check
+                // error handling
                 else {
-                    invalidCommand(command);
-                    continue;
+                    System.out.println("There are no files or directories in the index.");
+                    System.out.println(SIZE_ERR);
                 }
-
-                // searching index
-                for (String fileName: index.keySet()) {
-                    File current = index.get(fileName);
-
-                    // search directory
-                    if (current.isDirectory()) {
-                        searchDirectory(text, current);
-                    }
-
-                    // search file
-                    else {
-                        searchFile(text, current);
-                    }
-
-                }
-
             }
 
             // error handling
