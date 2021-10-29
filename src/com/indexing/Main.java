@@ -14,7 +14,7 @@ public class Main {
         System.out.println("read: displays contents of a given file or directory in the index");
         System.out.println("ls: displays the files and directories available in the index");
         System.out.println("search: searches for a word or phrase in the index");
-        System.out.println("\rreadme: opens the readme file");
+        System.out.println("\ninfo: opens the readme file");
         System.out.println("\nNOTE: Commands are case-sensitive.");
     }
 
@@ -162,8 +162,8 @@ public class Main {
                 commands();
             }
 
-            // 'readme' command
-            else if (command.equals("readme")) {
+            // 'info' command
+            else if (command.equals("info")) {
                 readme();
             }
 
