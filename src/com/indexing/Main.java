@@ -95,14 +95,9 @@ public class Main {
         }
     }
 
+    // main application
     public static void main(String[] args) throws FileNotFoundException {
-        // Console interface should allow for
-        // a. specifying the indexed files and directories and
-        // b. querying files containing a given word.
-        // Library should be extensible by the tokenization algorithm (simple splitting by words/support lexers/etc.).
-        // Providing some tests and a program with usage examples is advised.
-
-        // Set up input scanner
+        // set up input scanner
         Scanner sc = new Scanner(System.in);
 
         String HELP = "Use the 'help' command for the list of commands available.";
@@ -263,6 +258,7 @@ public class Main {
                     else {
                         System.out.println("There are no files or directories in the index.");
                         System.out.println(SIZE_ERR);
+
                         continue;
                     }
 
@@ -295,11 +291,11 @@ public class Main {
                     System.out.println(fileName + " is not in the index.");
                     System.out.println(MISSING_ERR);
                 }
-
             }
 
             // 'list' command
             else if (command.equals("ls")) {
+
                 // check for empty index
                 if (index.size() > 0) {
                     for (String item: index.keySet()) {
