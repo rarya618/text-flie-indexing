@@ -1,15 +1,13 @@
 package com.indexing;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
+    // create list of commands
     public static void commands() {
         System.out.println("Commands:");
         System.out.println("quit: quits application");
@@ -23,8 +21,23 @@ public class Main {
         System.out.println("NOTE: Commands are case sensitive.");
     }
 
+    // print when a command is invalid
     public static void invalidCommand(String command) {
         System.out.println(command + " is invalid.");
+    }
+
+    // process given file
+    public static boolean processFile(String filename) {
+        try {
+            File file = new File(filename);
+            Scanner fileScanner = new Scanner(file);
+
+            return true;
+        }
+
+        catch (IOException e) {
+            return false;
+        }
     }
 
     private String readFromInputStream(InputStream inputStream) throws IOException {
@@ -41,7 +54,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        // Write a Java application that provides a service for indexing text files.
+        // provides a service for indexing text files.
         // Console interface should allow for
         // a. specifying the indexed files and directories and
         // b. querying files containing a given word.
@@ -60,7 +73,10 @@ public class Main {
 
         // Introducing the user to the application
         System.out.println("Welcome to text-file-indexing! A service for indexing text files.");
+
+        // print list of commands
         commands();
+
         System.out.println(HELP);
         System.out.println("Happy indexing!");
 
@@ -121,10 +137,16 @@ public class Main {
                     continue;
                 }
 
-                System.out.println(START_PROCESS);
+                // check if file exists
+                if (processFile(fileName)) {
+                    index.add(fileName);
+                    System.out.println("Successfully added " + fileName + ".");
+                }
 
-                index.add(fileName);
-                System.out.println("Successfully added " + fileName + ".");
+                // error handling
+                else {
+                    System.out.println(fileName + " does not exist.");
+                }
 
             }
 
@@ -158,9 +180,6 @@ public class Main {
                     invalidCommand(command);
                     continue;
                 }
-
-                // start remove process
-                System.out.println(START_PROCESS);
 
                 // check if file exists in index
                 if (index.contains(fileName)) {
