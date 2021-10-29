@@ -14,12 +14,22 @@ public class Main {
         System.out.println("read: displays contents of a given file or directory in the index");
         System.out.println("ls: displays the files and directories available in the index");
         System.out.println("search: searches for a word or phrase in the index");
-        System.out.println("\nNOTE: Commands are case sensitive.");
+        System.out.println("\rreadme: opens the readme file");
+        System.out.println("\nNOTE: Commands are case-sensitive.");
     }
 
     // print when a command is invalid
     public static void invalidCommand(String command) {
         System.out.println(command + " is invalid.");
+    }
+
+    // readme file open
+    public static void readme() throws FileNotFoundException {
+        Scanner readme = new Scanner(new File("readme.txt"));
+
+        while (readme.hasNext()) {
+            System.out.println(readme.nextLine());
+        }
     }
 
     // processes a file or directory
@@ -150,6 +160,11 @@ public class Main {
             // 'help' command
             else if (command.equals("help")) {
                 commands();
+            }
+
+            // 'readme' command
+            else if (command.equals("readme")) {
+                readme();
             }
 
             // 'add' command

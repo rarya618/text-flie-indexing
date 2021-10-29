@@ -1,0 +1,15 @@
+The rule for working out prime numbers is really simple,
+but no one has ever worked out a simple formula for telling
+you whether a very big number is a prime number or what the
+next one will be. If a number is really, really big, it can
+take a computer years to work out whether it is a prime number.
+
+Prime numbers are useful for writing codes and in America they
+are classed as Military Material and if you find one over 100
+digits long you have to tell the CIA and they buy it off you
+for $10,000. But it would not be a very good way of making a living.
+
+Prime numbers are what is left when you have taken all the
+patterns away. I think prime numbers are like life. They are
+very logical but you could never work out the rules, even if
+\you spent all your time thinking about them.
