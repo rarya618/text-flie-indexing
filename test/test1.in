@@ -1,5 +1,8 @@
-ls
 add sample
+ls
+read sample
 search brown
 search Lorem
+rm sample
+ls
 quit
